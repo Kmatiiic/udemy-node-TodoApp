@@ -12,7 +12,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', function (err,db) {
     console.log('Connected to MongoDB server');
 
 
-    //query- key:value pairb 
+    //query- key:value pairs
     db.collection('Todos').find({completed: false}).toArray().then(function (docs) {
         console.log('Todos');
         console.log(JSON.stringify(docs, undefined, 2));
