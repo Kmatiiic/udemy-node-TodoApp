@@ -4,9 +4,17 @@ const request = require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+const todos = [{
+    text: 'First test todo'
+},
+{
+    text: 'First test todo'
+}];
 beforeEach(function(done) {
     //removes all todos in database
-    Todo.remove({}).then(() => done());
+    Todo.remove({}).then(function() {
+       return Todo.insertMany(todos);
+    }).then(() => done());
 });
 
 describe('POST /todos', function () {
@@ -27,7 +35,7 @@ describe('POST /todos', function () {
 
                 //make a request to the database to fetch todos
                 // to verifying the todo was added
-                Todo.find().then(function (todos) {
+                Todo.find({text}).then(function (todos) {
                     expect(todos.length).toBe(1); //check if item was added
                     expect(todos[0].text).toBe(text);
                     done();
@@ -52,7 +60,8 @@ describe('POST /todos', function () {
                 //make a request to the database to fetch todos
                 // to verifying the todo was added
                 Todo.find().then(function (todos) {
-                    expect(todos.length).toBe(0); //check if item was added
+                    //dummy todos added to test get todo route
+                    expect(todos.length).toBe(2); //check if item was added
                     done();
                 }).catch(function (e) {
                     done(e);
@@ -61,3 +70,15 @@ describe('POST /todos', function () {
     });
 
 });
+
+describe('GET /todos', () => {
+    it('should get all todos', (done) => {
+      request(app)
+        .get('/todos')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.todos.length).toBe(2);
+        })
+        .end(done);
+    });
+  });
