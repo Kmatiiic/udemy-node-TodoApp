@@ -90,7 +90,7 @@ app.patch('/todos/:id', function(req,res) {
         res.send({todo});
     }).catch(function(e) {
         res.status(400).send();
-    })
+    });
 });
 app.listen(port, function () {
     console.log(`Started on port ${port}`);
