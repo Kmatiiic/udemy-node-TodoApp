@@ -93,6 +93,24 @@ app.patch('/todos/:id', function(req,res) {
         res.status(400).send();
     });
 });
+
+app.post('/users', function(req,res) {
+    //object you want to pick from and array filled with the items that you want to pick
+    var body = _.pick(req.body, ['email', 'password']);
+
+    //body variable returns an object with credentials
+    var user = new User(body);
+
+    user.save().then(function () {
+        return user.generateAuthToken();
+    }).then(function (token) {
+        //custom header x-
+        res.header('x-auth', token).send(user);
+    }).catch(function(e) {
+        res.status(400).send(e);
+    });
+});
+
 app.listen(port, function () {
     console.log(`Started on port ${port}`);
 });
