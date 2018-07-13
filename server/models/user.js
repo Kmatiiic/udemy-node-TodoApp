@@ -37,8 +37,9 @@ UserSchema.methods.toJSON = function () {
     var userObject = this.toObject();
 
     return _.pick(userObject, ['_id', 'email']);
-}
+};
 
+//methods that belong to instances of User
 UserSchema.methods.generateAuthToken = function () {
     var user = this;
     var access = 'auth';
@@ -51,11 +52,13 @@ UserSchema.methods.generateAuthToken = function () {
     });
 };
 
+//statics belong to the model
 UserSchema.statics.findByToken = function (token) {
     var decoded;
 
     try {
-        jwt.verify(token, 'secval');
+        //returns decoded user
+        decoded = jwt.verify(token, 'secval');
     } catch (e) {
         // return new Promise(function (resolve,reject) {
         //     reject();
