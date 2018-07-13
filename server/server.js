@@ -1,4 +1,5 @@
 require('./config/config');
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -116,6 +117,20 @@ app.post('/users', function(req,res) {
 
 app.get('/users/me', authenticate, function (req,res) {
     res.send(req.user);
+});
+
+app.post('/users/login', function(req,res) {
+    //object you want to pick from and array filled with the items that you want to pick
+    var body = _.pick(req.body, ['email', 'password']);
+
+    User.findByCredentials(body.email, body.password).then(function(user) {
+       user.generateAuthToken().then(function(token) {
+           res.header('x-auth', token).send(user);
+       });
+    }).catch(function(e) {
+        res.status(400).send();
+    });
+    
 });
 
 app.listen(port, function () {
